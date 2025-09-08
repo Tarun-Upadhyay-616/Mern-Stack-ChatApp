@@ -1,0 +1,17 @@
+body {
+    display: flex;
+    justify-content: center;
+    background-image: url(../../assets/bg.jpg);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.box-area {
+    width: 730px;
+    opacity: 75%;
+}
+
+.extra {
+    display: none
+}
