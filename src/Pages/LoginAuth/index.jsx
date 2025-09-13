@@ -91,7 +91,7 @@ const LoginAuth = () => {
 
           <button
             onClick={handleLogin}
-            className="w-full py-3 bg-black text-white rounded-lg hover:bg-gray-800"
+            className="w-full py-3 bg-black text-white rounded-5 hover:bg-gray-800"
           >
             Login
           </button>
