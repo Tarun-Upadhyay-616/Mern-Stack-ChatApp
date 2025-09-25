@@ -27,34 +27,34 @@ const AuthRoute = ({ children }) => {
 }
 
 const App = () => {
-  // const { setUserInfo } = useAppStore()
-  // const [loading, setLoading] = useState(true)
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     try {
-  //       const response = await apiClient.get('/user-info', { withCredentials: true })
-  //       if (response.status === 200 && response.data.id) {
-  //         setUserInfo(response.data)
-  //       } else {
-  //         setUserInfo(undefined)
-  //       }
-  //     } catch (error) {
-  //       console.log("No active session: ", error.message)
-  //       setUserInfo(undefined)
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
-  //   getUserData()
-  // }, [])
-  // if (loading) {
-  //   return (
-  //     <div className='text-white d-flex justify-center items-center h-[100vh]'>Loading......</div>
-  //   )
-  // }
+  const { setUserInfo } = useAppStore()
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const response = await apiClient.get('/user-info', { withCredentials: true })
+        if (response.status === 200 && response.data.id) {
+          setUserInfo(response.data)
+        } else {
+          setUserInfo(undefined)
+        }
+      } catch (error) {
+        console.log("No active session: ", error.message)
+        setUserInfo(undefined)
+      } finally {
+        setLoading(false)
+      }
+    }
+    getUserData()
+  }, [])
+  if (loading) {
+    return (
+      <div className='flex justify-center items-center h-[100vh]'>Loading......</div>
+    )
+  }
   return (
     <>
-      {/* <BrowserRouter>
+      <BrowserRouter>
         <Routes>
           <Route
             path="/auth/login"
@@ -71,15 +71,10 @@ const App = () => {
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/auth/register" />} />
         </Routes>
-      </BrowserRouter> */}
-      <BrowserRouter>
+      </BrowserRouter>
+      {/* <BrowserRouter>
         <Routes>
-          <Route
-            path="/auth/login"
-            element={
-                <LoginAuth />
-            }
-          />
+          <Route path="/auth/login"element={ <LoginAuth />}/>
           <Route path="/auth/register" element={<RegisterAuth />} />
           <Route path="/auth/reset-password" element={<ResetPass />} />
           <Route path="/auth/verify-email" element={<VerifyEmail />} />
@@ -87,7 +82,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<Navigate to="/auth/register" />} />
         </Routes>
-      </BrowserRouter>
+      </BrowserRouter> */}
     </>
   )
 }

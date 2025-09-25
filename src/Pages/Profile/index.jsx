@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import Avatar from 'react-avatar';
 import '../Profile/index.css'
-import { apiClient } from '../../api-client'
+import { apiClient } from '../../api-client.js'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +9,10 @@ import { IoArrowBack } from 'react-icons/io5';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import { colors, getColor } from '../../utils/utils';
 import { useEffect } from 'react';
+import { useRef } from 'react';
+import { HOST } from '../../Constants.js';
+import Avatar from '@mui/material/Avatar';
+// import Avatar from "react-avatar";
 const Profile = () => {
   const { userInfo, setUserInfo } = useAppStore();
   const [firstname, setFirstname] = useState("")
@@ -17,12 +20,16 @@ const Profile = () => {
   const [image, setImage] = useState(null)
   const [hovered, setHovered] = useState(false)
   const [selectedColor, setSelectedColor] = useState(0)
+  const fileInputRef = useRef(null)
   const navigate = useNavigate();
   useEffect(()=>{
     if(userInfo.profilesetup){
       setFirstname(userInfo.firstname)
       setLastname(userInfo.lastname)
       setSelectedColor(userInfo.color)
+    }
+    if(userInfo.image){
+      setImage(`http://localhost:2415/${userInfo.image}`)
     }
   },[userInfo])
   const showToast = (message, type = 'error') => {
@@ -33,11 +40,11 @@ const Profile = () => {
   };
   const validate = () =>{
     if(!firstname){
-      showToast("Please First Name")
+      toast.error("Please Enter First Name")
       return false
     }
     if(!lastname){
-      showToast("Please Last Name")
+      toast.error("Please Enter Last Name")
       return false
     }
     return true
@@ -50,6 +57,7 @@ const Profile = () => {
       if (response.status == 200) {
         const updatedUserInfo = {
           ...userInfo,
+
           firstname:firstname,
           lastname:lastname,
           color:selectedColor,
@@ -64,15 +72,39 @@ const Profile = () => {
     }
   }
   const backToChat = ()=>{
-    if(userInfo.profilesetup){
-      navigate("/chat")
-    }else{
-      showToast("Please set up Profile to continue")
+    navigate("/chat")
+  }
+  const handleFileInputClick = () =>{
+    fileInputRef.current.click()
+  }
+  const handleImageChange = async (event)=>{
+    const file = event.target.files[0]
+    console.log({file})
+    if(file){
+      const formData = new FormData()
+      formData.append("profile-image",file)
+      const response = await apiClient.post("/addprofileimg",formData,{withCredentials: true})
+      if(response.status === 200 && response.data.image){
+        setUserInfo({...userInfo, image:response.data.image})
+        toast.success("Image Updated Successfully")
+      }
+    }
+  }
+  const handleDeleteImage = async ()=>{
+    try {
+      const response = await apiClient.delete("/removeprofileimage",{withCredentials:true})
+      if(response.status===200){
+        setUserInfo({...userInfo , image:null})
+        toast.success("Image removed successfully")
+        setImage(null)
+      }
+    } catch (error) {
+      console.log(error);
+      
     }
   }
   return (
     <div className='flex items-center justify-center flex-col gap-10 h-[100vh] bg-[#1b1c24] w-[100vw]'>
-      <ToastContainer/>
       <div className="flex flex-col gap-10 w-[80vw] md:w-max">
         <div>
           <IoArrowBack className='text-4xl lg:text-6xl text-white cursor-pointer' onClick={backToChat}/>
@@ -82,9 +114,10 @@ const Profile = () => {
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
-            <div className='h-32 w-32 md:w-48 md:h-48 rounded-full overflow-hidden ' >
+            <div className='h-32 w-32 md:w-48 md:h-48 rounded-full overflow-hidden flex items-center justify-center' >
+              
               {image ? (
-                <Avatar src={image} round={true} className='object-cover w-full h-full bg-black ' />
+                <Avatar src={image} className='w-100 h-100'/>
               ) : (
                 <div className={`uppercase h-32 w-32 md:w-48 md:h-48 text-7xl border-[1px] flex items-center justify-center rounded-full  ${getColor(selectedColor)}`} >
                   {firstname
@@ -93,13 +126,21 @@ const Profile = () => {
                   }
                 </div>
               )}
+              {/* <div className={`uppercase h-32 w-32 md:w-48 md:h-48 text-7xl border-[1px] flex items-center justify-center rounded-full  ${getColor(selectedColor)}`} >
+                  {firstname
+                    ? firstname.split("").shift()
+                    : userInfo.email.split("").shift()
+                  }
+                </div> */}
+              
             </div>
-            {hovered && <div className='absolute inset-0 flex items-center justify-center rounded-full bg-black/50 cursor-pointer ' >
+            {hovered && <div className='absolute inset-0 flex items-center justify-center rounded-full bg-black/50 cursor-pointer '
+            onClick={image ? handleDeleteImage : handleFileInputClick} >
               {image ?
                 <FaTrash className='text-white text-3xl cursor-pointer ' /> :
                 <FaPlus className='text-white text-3xl cursor-pointer ' />}
             </div>}
-            {/* <input type="text"> */}
+            <input type="file" ref={fileInputRef} className='hidden' onChange={handleImageChange} name = "profile-image" accept='.png ,.jpg, .jpeg, .svg ,.webp' />
           </div>
           <div className='min-w-32 md:min-w-64 flex-col gap-5 text-white items-center justify-center'>
             <div class="w-full mb-1">
@@ -130,7 +171,7 @@ const Profile = () => {
                      className={`${color} h-8 w-8 rounded-full cursor-pointer transition-all duration-300
                      ${
                       setSelectedColor === index
-                        ? "outline outline-5 outline-white"
+                        ? "outline-5 outline-white"
                         : ""
                      }
                      `}

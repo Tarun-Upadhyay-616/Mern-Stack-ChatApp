@@ -63,7 +63,7 @@ const LoginAuth = () => {
 
         {/* Left Box */}
         <div className="w-1/2 flex justify-center items-center bg-blue-700">
-          <img src="images/1.png" alt="Illustration" className="w-52" />
+          <img src="#" alt='LOGO HERE' className="w-52" />
         </div>
 
         {/* Right Box */}

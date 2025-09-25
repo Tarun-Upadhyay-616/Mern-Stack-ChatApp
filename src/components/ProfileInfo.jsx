@@ -2,9 +2,10 @@ import { useNavigate } from "react-router-dom"
 import { colors, getColor } from "../utils/utils.js"
 import { MdModeEdit } from "react-icons/md";
 import { GrPowerShutdown } from "react-icons/gr";
-import { useEffect, useState } from "react"
 import { apiClient } from "../api-client.js";
 import { useAppStore } from "../Store";
+// import Avatar from "react-avatar";
+import Avatar from '@mui/material/Avatar';
 
 const ProfileInfo = () => {
   const { userInfo,setUserInfo } = useAppStore()
@@ -21,12 +22,12 @@ const ProfileInfo = () => {
     }
   }
   return (
-    <div className="h-16 flex items-center justify-between w-full px-3 bg-[#2a2b33] rounded-lg bg-white/10">
+    <div className="h-16 flex items-center justify-between w-full px-3 rounded-lg bg-white/10">
       <div class="flex gap-3 items-center justify-center">
         <div className="w-12 h-12 relative">
-          <div className='h-12 w-12 rounded-full overflow-hidden ' >
+          <div className='h-12 w-12 rounded-full overflow-hidden bg-[#]' >
             {userInfo.image ? (
-              <Avatar src={image} round={true} className='object-cover w-full h-full' />
+              <Avatar src={`http://localhost:2415/${userInfo.image}`} className='w-100 h-100'/>
             ) : (
               <div className={`uppercase h-12 w-12 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(userInfo.color)} `} >
                 {userInfo.firstname

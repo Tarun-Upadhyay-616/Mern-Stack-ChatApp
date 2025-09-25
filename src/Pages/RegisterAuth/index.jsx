@@ -56,17 +56,13 @@ const RegisterAuth = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex flex-col justify-center items-center min-h-screen md:flex" >
       <ToastContainer />
       <div className="flex w-[800px] rounded-2xl shadow-lg overflow-hidden bg-white">
 
         {/* Left Box */}
         <div className="w-1/2 flex flex-col justify-center items-center bg-blue-700 p-6 text-center">
-          <img src="images/1.png" alt="Illustration" className="w-52 mb-4" />
-          <p className="text-white text-2xl font-semibold">Be Verified</p>
-          <small className="text-white mt-2">
-            Join experienced Designers on this platform.
-          </small>
+          <img src="images/1.png" alt="LOGO HERE" className="w-52 mb-4" />
         </div>
 
         {/* Right Box */}
