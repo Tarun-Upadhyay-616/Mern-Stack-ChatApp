@@ -10,7 +10,7 @@ import { FaPlus, FaTrash } from 'react-icons/fa';
 import { colors, getColor } from '../../utils/utils';
 import { useEffect } from 'react';
 import { useRef } from 'react';
-import { HOST } from '../../Constants.js';
+import { HOST_ } from '../../Constants.js';
 import Avatar from '@mui/material/Avatar';
 // import Avatar from "react-avatar";
 const Profile = () => {
@@ -29,7 +29,7 @@ const Profile = () => {
       setSelectedColor(userInfo.color)
     }
     if(userInfo.image){
-      setImage(`http://localhost:2415/${userInfo.image}`)
+      setImage(`${HOST_}/${userInfo.image}`)
     }
   },[userInfo])
   const showToast = (message, type = 'error') => {

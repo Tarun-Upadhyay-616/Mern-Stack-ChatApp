@@ -4,8 +4,8 @@ import { MdModeEdit } from "react-icons/md";
 import { GrPowerShutdown } from "react-icons/gr";
 import { apiClient } from "../api-client.js";
 import { useAppStore } from "../Store";
-// import Avatar from "react-avatar";
 import Avatar from '@mui/material/Avatar';
+import { HOST_ } from "../Constants.js";
 
 const ProfileInfo = () => {
   const { userInfo,setUserInfo } = useAppStore()
@@ -27,7 +27,7 @@ const ProfileInfo = () => {
         <div className="w-12 h-12 relative">
           <div className='h-12 w-12 rounded-full overflow-hidden bg-[#]' >
             {userInfo.image ? (
-              <Avatar src={`http://localhost:2415/${userInfo.image}`} className='w-100 h-100'/>
+              <Avatar src={`${HOST_}/${userInfo.image}`} className='w-100 h-100'/>
             ) : (
               <div className={`uppercase h-12 w-12 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(userInfo.color)} `} >
                 {userInfo.firstname
