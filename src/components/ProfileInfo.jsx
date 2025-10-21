@@ -22,10 +22,10 @@ const ProfileInfo = () => {
     }
   }
   return (
-    <div className="h-16 flex items-center justify-between w-full px-3 rounded-lg bg-white/10">
+    <div className="h-16 flex items-center justify-between w-full px-3 rounded-lg bg-black/20 shadow-sm">
       <div class="flex gap-3 items-center justify-center">
         <div className="w-12 h-12 relative">
-          <div className='h-12 w-12 rounded-full overflow-hidden bg-[#]' >
+          <div className='h-12 w-12 rounded-full overflow-hidden' >
             {userInfo.image ? (
               <Avatar src={`${HOST_}/${userInfo.image}`} className='w-100 h-100'/>
             ) : (
@@ -38,15 +38,15 @@ const ProfileInfo = () => {
             )}
           </div>
         </div>
-        <div className="text-black">
+        <div className="text-gray-100 font-semibold">
           {
             userInfo.firstname && userInfo.lastname ? `${userInfo.firstname} ${userInfo.lastname}` : ""
           }
         </div>
       </div>
-      <div class="flex gap-3">
-        <MdModeEdit className="text-lg mt-1 text-black" onClick={() => navigate("/profile")} />
-        <GrPowerShutdown className="text-lg mt-1 text-black" onClick={handlelogout} />
+      <div class="flex gap-4">
+        <MdModeEdit className="text-lg mt-1 text-gray-400 cursor-pointer hover:text-white" onClick={() => navigate("/profile")} />
+        <GrPowerShutdown className="text-lg mt-1 text-gray-400 cursor-pointer hover:text-red-500" onClick={handlelogout} />
       </div>
     </div>
   )

@@ -74,7 +74,6 @@ const VerifyEmail = () => {
                         </p>
                     </div>
 
-                    {/* Improved 6-input OTP field */}
                     <div className="flex justify-center gap-2">
                         {otp.map((data, index) => (
                             <input

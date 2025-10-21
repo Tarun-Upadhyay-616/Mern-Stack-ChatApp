@@ -5,10 +5,13 @@ import { IoSend } from 'react-icons/io5';
 import EmojiPicker from "emoji-picker-react";
 import { useAppStore } from '../Store';
 import { useSocket } from '../context/socketContext';
+import { apiClient3 } from '../api-client';
+import { toast } from 'react-toastify';
 
 const Message_Container = () => {
   const { selectedChatData, userInfo,addMessage } = useAppStore();
   const emojiRef = useRef();
+  const fileInputRef = useRef(null);
   const socket = useSocket();
   const [message, setMessage] = useState("");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
@@ -27,7 +30,7 @@ const Message_Container = () => {
     setMessage((msg) => msg + emoji.emoji);
   };
 
-  const handleSendMessage = async () => {
+  const handleSendTextMessage = async () => {
     if (message.trim() === "") return;
 
     const messageData = {
@@ -43,21 +46,59 @@ const Message_Container = () => {
     setMessage("");
     setEmojiPickerOpen(false);
   };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('recipient', selectedChatData._id);
+    formData.append('sender', userInfo.id);
+
+    try {
+      const response = await apiClient3.post('/api/message/upload-file', formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status !== 201) {
+         toast.error("Failed to send file.");
+      }
+    } catch (error) {
+      console.error("File upload error:", error);
+      toast.error("Error uploading file.");
+    }
+    e.target.value = null;
+  };
+
+  const handleAttachmentClick = () => {
+    fileInputRef.current.click();
+  };
   
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      handleSendTextMessage();
     }
   };
 
   return (
-    <div className='h-auto min-h-[80px] bg-gray-100 dark:bg-[#1f2029] flex items-center px-4 py-2 gap-4 text-white'>
-      <div className="flex-1 flex bg-gray-200 dark:bg-[#2f303b] rounded-xl items-center px-2">
+    <div className='h-auto min-h-[80px] bg-transparent flex items-center px-4 py-2 gap-4 text-white'>
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        style={{ display: 'none' }} 
+        onChange={handleFileChange} 
+      />
+
+      <div className="flex-1 flex bg-black/20 rounded-xl items-center px-2 border border-white/10">
         <div className="relative">
           <button
             onClick={() => setEmojiPickerOpen(true)}
-            className='p-2 text-gray-500 dark:text-gray-400 hover:text-[#1f4352] dark:hover:text-white transition-colors duration-200'
+            className='p-2 text-gray-400 hover:text-purple-400 transition-colors duration-200'
           >
             <RiEmojiStickerLine className='text-2xl' />
           </button>
@@ -74,20 +115,22 @@ const Message_Container = () => {
         </div>
         <input
           type="text"
-          className='flex-1 p-3 bg-transparent focus:outline-none resize-none max-h-24'
-          placeholder='Type a message...'
+          className='flex-1 p-3 bg-transparent focus:outline-none resize-none max-h-24 text-white placeholder-gray-400'
+          placeholder='Send a message...'
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={handleKeyPress}
         />
-        <button className='p-2 text-gray-500 dark:text-gray-400 hover:text-[#1f4352] dark:hover:text-white transition-colors duration-200'>
+        <button 
+          onClick={handleAttachmentClick}
+          className='p-2 text-gray-400 hover:text-purple-400 transition-colors duration-200'>
           <GrAttachment className='text-xl' />
         </button>
       </div>
       <button
-        onClick={handleSendMessage}
-        className='bg-[#1f4352] rounded-full flex justify-center items-center w-12 h-12 flex-shrink-0 text-white
-                   hover:bg-[#1a3846] transition-all duration-300'
+        onClick={handleSendTextMessage}
+        className='bg-purple-600 rounded-lg flex justify-center items-center w-12 h-12 flex-shrink-0 text-white
+                   hover:bg-purple-700 transition-all duration-300'
       >
         <IoSend className='text-2xl' />
       </button>

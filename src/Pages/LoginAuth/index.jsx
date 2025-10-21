@@ -1,104 +1,129 @@
-import React, { useEffect, useState } from 'react';
-import "../LoginAuth/index.css";
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../api-client';
+import Logo from "../../assets/logo.png";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useAppStore } from './../../Store/index.js';
 
 const LoginAuth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const {userInfo,setUserInfo} = useAppStore()
-  const navigate = useNavigate()
-
-  const showToast = (message, type = 'error') => {
-    toast(message, { type, position: 'top-center' });
-  };
-  const showToastsucc = (message, type = 'success') => {
-    toast(message, { type, position: 'top-center' });
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const { setUserInfo } = useAppStore();
+  const navigate = useNavigate();
 
   const isValid = () => {
     if (!email) {
-      showToast('Email is Required');
+      toast.error("Email is required");
       return false;
     }
     if (!password) {
-      showToast('Password is Required');
+      toast.error('Password is Required');
       return false;
     }
-    return true
-  }
+    return true;
+  };
 
   const handleLogin = async () => {
     if (!isValid()) return;
-
+    setIsLoading(true);
     try {
       const response = await apiClient.post('/login', { email, password }, { withCredentials: true });
-      setUserInfo(response.data.user)
-      if (response.data.user) {
-        showToastsucc('Login successful. Redirecting to homepage')
-        if(userInfo.profilesetup){
-          navigate("/chat")
-        }else{
-          navigate("/profile")
+      const user = response.data.user;
+
+      if (user) {
+        await setUserInfo(user);
+        toast.success('Login successful! Redirecting...');
+        if (user.profilesetup) {
+          navigate("/chat");
+        } else {
+          navigate("/profile");
         }
       }
-      else {
-        showToast(response.data.message)
+      else{
+        toast.error(response.data?.message)
       }
-
-
     } catch (err) {
-      showToast(err.message);
+      toast.error(err.response?.data?.message || 'Invalid credentials or server error.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-
-    <div className="flex justify-center items-center min-h-screen">
-      <ToastContainer />
-      <div className="flex w-[800px] rounded-2xl shadow-lg overflow-hidden bg-white">
-
-        {/* Left Box */}
-        <div className="w-1/2 flex justify-center items-center bg-blue-700">
-          <img src="#" alt='LOGO HERE' className="w-52" />
-        </div>
-
-        {/* Right Box */}
-        <div className="w-1/2 p-8">
-          <h2 className="text-2xl font-bold text-center mb-2">Welcome Back</h2>
-          <p className="text-center mb-6">We are happy to have you back.</p>
-
-          <input
-            type="email"
-            className="w-full p-3 mb-3 border rounded-lg bg-gray-100"
-            placeholder="Email address"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            className="w-full p-3 mb-3 border rounded-lg bg-gray-100"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          <div className="flex justify-between text-sm mb-4">
-            <p>Don’t have an account? <Link to="/auth/register" className="text-blue-600">Register</Link></p>
-            <Link to="/auth/reset-password" className="text-blue-600">Forgot Password</Link>
+    <>
+      <ToastContainer theme='dark' position='bottom-right' />
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+        <div className="w-full max-w-4xl bg-white dark:bg-gray-800 shadow-2xl overflow-hidden md:grid md:grid-cols-5">
+        <div className="hidden md:col-span-2 md:flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-900">
+             <img src={Logo} alt="Logo here" className="w-full h-full object-contain p-4 md:p-0" />
           </div>
 
-          <button
-            onClick={handleLogin}
-            className="w-full py-3 bg-black text-white rounded-5 hover:bg-gray-800"
-          >
-            Login
-          </button>
+          <div className="md:col-span-3 p-8 md:p-12">
+            <div className="text-center md:text-left mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome Back!</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">We're happy to see you again.</p>
+            </div>
+
+            <div className="space-y-5">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <input
+                  type="email"
+                  className="w-full px-5 p-3 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
+                  placeholder="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                   <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  type="password"
+                  className="w-full px-5 p-3 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between mt-5 text-sm">
+              <Link to="/auth/reset-password" className="font-medium text-blue-600 hover:underline">
+                Forgot Password?
+              </Link>
+            </div>
+
+            <button
+              onClick={handleLogin}
+              disabled={isLoading}
+              className="w-full mt-3 mb-2 py-3 bg-gray-900 dark:bg-blue-600 text-white font-bold rounded-lg transition-all hover:bg-gray-800 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 dark:focus:ring-blue-500 disabled:opacity-50"
+            >
+              {isLoading ? 'Signing In...' : 'Login'}
+            </button>
+
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
+              Don't have an account?{' '}
+              <Link to="/auth/register" className="font-medium text-blue-600 hover:underline">
+                Register here
+              </Link>
+            </p>
+          </div>
+          
+        
+          
         </div>
       </div>
-    </div>
-
+    </>
   );
 };
 

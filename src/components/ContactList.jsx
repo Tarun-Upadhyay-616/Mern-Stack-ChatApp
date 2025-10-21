@@ -25,25 +25,16 @@ const ContactList = ({ chat }) => {
         )}
       </div>
 
-
       <div className="flex-1 min-w-0 ml-3">
         <div className="flex justify-between items-center mb-1">
-          <p className="text-sm font-semibold truncate">
+          <p className="text-sm font-semibold truncate text-white">
             {`${chat.firstname} ${chat.lastname}`}
-          </p>
-          <p className="text-xs text-gray-400">
-            {moment(chat.lastMessageTimestamp).format('LT')}
           </p>
         </div>
         <div className="flex justify-between items-center">
           <p className="text-xs text-gray-400 truncate">
-            {chat.lastMessage}
+            Offline
           </p>
-          {chat.unreadCount > 0 && (
-            <span className="bg-emerald-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-              {chat.unreadCount}
-            </span>
-          )}
         </div>
       </div>
     </div>
