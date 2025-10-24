@@ -14,7 +14,7 @@ const Chat_Header = ({ onProfileClick }) => {
 
         <button
           onClick={closeChat}
-          className="lg:hidden text-gray-300 hover:text-white"
+          className="md:hidden text-gray-300 hover:text-white"
           aria-label="Back to contacts"
         >
           <IoArrowBack className='text-2xl' />
@@ -39,7 +39,7 @@ const Chat_Header = ({ onProfileClick }) => {
       </div>
 
 
-      <div className='flex items-center justify-center'>
+      <div className='hidden md:flex items-center justify-center'>
         <button
           onClick={closeChat}
           className='text-red-500 hover:text-red-400'

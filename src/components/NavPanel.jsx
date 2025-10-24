@@ -75,8 +75,7 @@ const NavPanel = () => {
         }`}
       >
         <header className="flex items-center justify-between h-[10vh] min-h-[70px] px-4">
-          <div className="flex items-center gap-2">
-            <img src={Logo} alt="Logo" className='w-10 h-10 invert m-0'/>
+          <div className="flex items-center gap-2 text-3xl justify-center w-100 bbh-sans-bartle-regular text-[#3b0037] bg-gray-500/20 rounded-5">
             Synk
           </div>
         </header>

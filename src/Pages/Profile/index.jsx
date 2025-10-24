@@ -126,12 +126,6 @@ const Profile = () => {
                   }
                 </div>
               )}
-              {/* <div className={`uppercase h-32 w-32 md:w-48 md:h-48 text-7xl border-[1px] flex items-center justify-center rounded-full  ${getColor(selectedColor)}`} >
-                  {firstname
-                    ? firstname.split("").shift()
-                    : userInfo.email.split("").shift()
-                  }
-                </div> */}
               
             </div>
             {hovered && <div className='absolute inset-0 flex items-center justify-center rounded-full bg-black/50 cursor-pointer '
