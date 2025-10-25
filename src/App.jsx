@@ -10,6 +10,7 @@ import RegisterAuth from './Pages/RegisterAuth/index.jsx';
 import { useAppStore } from './Store/index.js'
 import { useEffect } from 'react'
 import { apiClient } from './api-client.js'
+import SplashScreen from "./components/Splash_Screen"
 
 const PrivateRoute = ({ children }) => {
   const { userInfo } = useAppStore()
@@ -29,24 +30,33 @@ const AuthRoute = ({ children }) => {
 const App = () => {
   const { setUserInfo } = useAppStore()
   const [loading, setLoading] = useState(true)
+  const [showSplash, setShowSplash] = useState(true)
+  useEffect(() => {
+    const splashTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3000);
+    return () => clearTimeout(splashTimer);
+  }, []);
   useEffect(() => {
     const getUserData = async () => {
       try {
         const response = await apiClient.get('/user-info', { withCredentials: true })
         if (response.status === 200 && response.data.id) {
-          setUserInfo(response.data)
-        } else {
+          setUserInfo(response.data) 
           setUserInfo(undefined)
         }
       } catch (error) {
         console.log("No active session: ", error.message)
-        setUserInfo(undefined)
+        setUserInfo(undefined) 
       } finally {
         setLoading(false)
       }
     }
     getUserData()
-  }, [])
+  }, [setUserInfo])
+  if (showSplash) {
+    return <SplashScreen />;
+  }
   if (loading) {
     return (
       <div className='flex justify-center items-center h-[100vh]'>Loading......</div>
@@ -72,17 +82,6 @@ const App = () => {
           <Route path="*" element={<Navigate to="/auth/register" />} />
         </Routes>
       </BrowserRouter>
-      {/* <BrowserRouter>
-        <Routes>
-          <Route path="/auth/login"element={ <LoginAuth />}/>
-          <Route path="/auth/register" element={<RegisterAuth />} />
-          <Route path="/auth/reset-password" element={<ResetPass />} />
-          <Route path="/auth/verify-email" element={<VerifyEmail />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="*" element={<Navigate to="/auth/register" />} />
-        </Routes>
-      </BrowserRouter> */}
     </>
   )
 }

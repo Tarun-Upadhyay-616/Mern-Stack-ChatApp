@@ -8,12 +8,27 @@
 
 
 ::-webkit-scrollbar {
-  background-color: rgb(74, 4, 56);
-  opacity: 10%;
-  color: black;
+  background: transparent;
+  border: 2px solid rgb(0, 0, 0,0.1);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 0, 0,0.1);
+  border-radius: 6px;
 }
 
-body,
-.overflow-y-auto {
-  color: black;
+@keyframes zoom-in {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
+
+.animate-zoom-in {
+  animation: zoom-in 1.5s ease-out forwards;
+}
+

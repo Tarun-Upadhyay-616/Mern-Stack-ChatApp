@@ -83,7 +83,7 @@ const Message_Container = () => {
   };
 
   return (
-    <div className='h-auto min-h-[80px] bg-transparent flex items-center px-4 py-2 gap-4 text-white border-t border-gray-700'>
+    <div className='h-auto min-h-[80px] w-full bg-transparent flex items-center px-4 py-2 gap-2 text-white border-t border-gray-700'>
       <div className="flex-1 flex bg-transparent border-2 border-gray-500 rounded-xl items-center px-2">
         <div className="relative">
           <button

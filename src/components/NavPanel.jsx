@@ -70,8 +70,8 @@ const NavPanel = () => {
       <aside className={`flex flex-col h-full bg-transparent text-gray-100 transition-all duration-300
                        border-r border-white/10
                        ${selectedChatData
-          ? 'hidden md:flex md:w-[25vw] min-w-[300px] max-w-[320px]'
-          : 'w-full md:w-[25vw] min-w-[300px] max-w-[320px]'
+                        ? 'hidden md:flex md:w-[25vw] md:min-w-[300px] md:max-w-[320px]'
+                        : 'w-full md:w-[25vw] md:min-w-[300px] md:max-w-[320px]'
         }`}
       >
         <header className="flex items-center justify-between h-[10vh] min-h-[70px] px-4">

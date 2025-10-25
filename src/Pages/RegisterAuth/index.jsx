@@ -1,7 +1,7 @@
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useState } from 'react';
-import Logo from "../../assets/logo.png";
+// Logo import removed
 import { apiClient } from '../../api-client';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -17,6 +17,11 @@ const RegisterAuth = () => {
       toast.error('Email is Required');
       return false;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        toast.error('Please enter a valid email address.');
+        return false;
+    }
     if (!password) {
       toast.error('Password is Required');
       return false;
@@ -24,6 +29,10 @@ const RegisterAuth = () => {
     if (password.length < 6) {
       toast.error('Password must be at least 6 characters long.');
       return false;
+    }
+    if (!confirmPassword) {
+        toast.error('Please confirm your password.');
+        return false;
     }
     if (password !== confirmPassword) {
       toast.error('Passwords do not Match');
@@ -38,7 +47,7 @@ const RegisterAuth = () => {
     try {
       const response = await apiClient.post('/signup', { email, password, confirmPassword }, { withCredentials: true });
       if (response.data.user) {
-        localStorage.setItem("userId", response.data.user.id);
+  
         await apiClient.post('/sendotp', { userId: response.data.user.id }, { withCredentials: true });
         toast.success('Signup successful! Please verify your email.');
         setTimeout(() => {
@@ -47,7 +56,13 @@ const RegisterAuth = () => {
       }
     } catch (err) {
       console.error('Error during signup:', err);
-      toast.error(err.response?.data?.message || 'Something went wrong');
+      if (err.response) {
+        toast.error(err.response.data?.message || 'Signup failed. Please try again.');
+      } else if (err.request) {
+        toast.error('No response from server. Please check your connection.');
+      } else {
+        toast.error('Something went wrong during signup.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -55,82 +70,72 @@ const RegisterAuth = () => {
 
   return (
     <>
-      <ToastContainer theme='dark' position='bottom-right' />
+      <ToastContainer theme='dark' position='bottom-right' autoClose={3000} />
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 ">
-        <div className="w-full max-w-4xl bg-white dark:bg-gray-800 shadow-2xl overflow-hidden md:grid md:grid-cols-5">
-        
-        <div className="md:col-span-2 flex items-center justify-center bg-gray-900 h-60 md:h-auto md:p-10">
-            <img src={Logo} alt='Logo Here' className="h-full w-auto invert md:h-80" />
+
+        <div className="w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl rounded-lg overflow-hidden p-8 md:p-12">
+
+    
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Get Started</h2>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Create your account now.</p>
           </div>
 
-          <div className="md:col-span-3 p-8 md:p-12">
-            <div className="text-center md:text-left mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Get Started</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Create your account now.</p>
+
+          <div className="space-y-5">
+
+            <div className="relative">
+              
+              <input
+                type="email"
+                className="w-full pl-10 pr-3 p-3 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none dark:text-white dark:placeholder-gray-400"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-label="Email address"
+              />
             </div>
 
-            <div className="space-y-5">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <input
-                  type="email"
-                  className="w-full px-5 p-3 text-sm bg-gray-50 dark:bg-gray-700 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <input
-                  type="password"
-                  className="w-full px-5 p-3 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <input
-                  type="password"
-                  className="w-full px-5 p-3 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
-                  placeholder="Confirm Password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
+            <div className="relative">
+              <input
+                type="password"
+                className="w-full pl-10 pr-3 p-3 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none dark:text-white dark:placeholder-gray-400"
+                placeholder="Password (min. 6 characters)"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-label="Password"
+              />
             </div>
 
-            <button
-              onClick={handleRegister}
-              disabled={isLoading}
-              className="w-full mt-5 mb-2 py-3 bg-gray-900 dark:bg-blue-600 text-white font-bold rounded-lg transition-all hover:bg-gray-800 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 dark:focus:ring-blue-500 disabled:opacity-50"
-            >
-              {isLoading ? 'Creating Account...' : 'Register'}
-            </button>
-
-            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
-              Already a member?{' '}
-              <Link to="/auth/login" className="font-medium text-blue-600 hover:underline">
-                Sign In
-              </Link>
-            </p>
+            <div className="relative">
+              
+              <input
+                type="password"
+                className="w-full pl-10 pr-3 p-3 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none dark:text-white dark:placeholder-gray-400"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                aria-label="Confirm Password"
+              />
+            </div>
           </div>
+
+
+          <button
+            onClick={handleRegister}
+            disabled={isLoading}
+            className="w-full mt-5 mb-4 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-bold rounded-lg transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'Creating Account...' : 'Register'}
+          </button>
+
+
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
+            Already a member?{' '}
+            <Link to="/auth/login" className="font-medium text-purple-600 hover:underline dark:text-purple-400">
+              Sign In
+            </Link>
+          </p>
         </div>
       </div>
     </>

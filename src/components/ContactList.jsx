@@ -17,9 +17,9 @@ const ContactList = ({ chat }) => {
     >
       <div className="flex-shrink-0">
         {chat.image ? (
-          <Avatar src={`${HOST_}/${chat.image}`} sx={{ width: 32, height: 32 }} />
+          <Avatar src={`${HOST_}/${chat.image}`} sx={{ width: 40, height: 40 }}/>
         ) : (
-          <Avatar sx={{ width: 32, height: 32, bgcolor: getColor(chat.color), fontSize: '1.25rem' }}>
+          <Avatar sx={{ width: 40, height: 40, bgcolor: getColor(chat.color), fontSize: '1.25rem' }}>
             {chat.firstname ? chat.firstname.charAt(0).toUpperCase() : 'C'}
           </Avatar>
         )}
@@ -27,7 +27,7 @@ const ContactList = ({ chat }) => {
 
       <div className="flex-1 min-w-0 ml-3">
         <div className="flex justify-between items-center mb-1">
-          <p className="text-sm font-semibold truncate text-white">
+          <p className="text-lg font-semibold truncate text-white">
             {`${chat.firstname} ${chat.lastname}`}
           </p>
         </div>
